@@ -78,11 +78,12 @@ def get_sales_products_created_last_week(db: Session):
 
 
 
-def get_total_sales_and_count_by_date_range(db: Session, start_date: datetime.date, end_date: datetime.date):
+def get_total_sales_count_and_avg_by_date_range(db: Session, start_date: datetime.date, end_date: datetime.date):
     # Query to sum the total_sales_value and count records between start_date and end_date
     result = db.query(
         func.sum(models.SalesProducts.total_sales_value).label('total_sales_value'),
-        func.count(models.SalesProducts.id).label('total_count')
+        func.count(models.SalesProducts.id).label('total_count'),
+        func.avg(models.SalesProducts.total_sales_value).label('tatal_sales_avg')
     ).filter(
         models.SalesProducts.created_at.between(start_date, end_date)
     ).first()  # Use .first() to get the first (and only) result

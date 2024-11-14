@@ -116,18 +116,36 @@ def get_total_sales_and_count(
 
 
 
+
+
+@app.get("/saless_productss/")
+def get_total_sales_count_and_avg(
+    start_date: datetime.date, end_date: datetime.date, db: Session = Depends(get_db)
+):
+    result = crud.get_total_sales_count_and_avg_by_date_range(db, start_date, end_date)
+     
+    total_sales_value, total_count, total_sales_avg = result 
+
+    if total_sales_value is None and total_count is None:
+        raise HTTPException(status_code=404, detail="No sales found in the given date range")
+    
+   
+    return {"result": {"total_sales_value" :total_sales_value, "total_count":total_count, "total_sales_avg":total_sales_avg}}
+
+
+
 #  Generate dummy data for initial setup
-@app.on_event("startup")
-def seed_data():
-    db = SessionLocal()
-    for _ in range(5):  # Create 5 dummy records
-        fake_product = SalesProducts(
-            product_name=faker.word(),
-            product_sku=faker.bothify(text="SKU-#####"),
-            total_sales_value=random.uniform(100, 1000),
-            orders_count=random.randint(1, 100),
-            created_at=datetime.datetime.utcnow() 
-        )
-        db.add(fake_product)
-    db.commit()
-    db.close()
+# @app.on_event("startup")
+# def seed_data():
+#     db = SessionLocal()
+#     for _ in range(5):  # Create 5 dummy records
+#         fake_product = SalesProducts(
+#             product_name=faker.word(),
+#             product_sku=faker.bothify(text="SKU-#####"),
+#             total_sales_value=random.uniform(100, 1000),
+#             orders_count=random.randint(1, 100),
+#             created_at=datetime.datetime.utcnow() 
+#         )
+#         db.add(fake_product)
+#     db.commit()
+#     db.close()
